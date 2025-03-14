@@ -1,0 +1,2 @@
+rootProject.name = 'Sensors-monitoring'
+include 'monitor-sensors', 'statistics-service'

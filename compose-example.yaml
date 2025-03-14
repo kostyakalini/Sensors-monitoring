@@ -1,0 +1,71 @@
+# Это пример файла docker-compose.yaml, скопировав и создав файл docker-compose.yaml в корне проекта,
+# вы сможете запустить все сервисы одной командой docker-compose up
+# НЕ ДОБАВЛЯТЬ свои ПАРОЛИ в этот пример
+services:
+  sensors-db:
+    image: postgres:17.4-alpine3.21
+    ports:
+      - "5439:5432"
+    container_name: sensors-db
+    environment:
+      POSTGRES_DB: sensors
+      POSTGRES_USER: YOUR_USERNAME
+      POSTGRES_PASSWORD: YOUR_PASSWORD
+    volumes:
+      - monitor_sensors_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  monitor-sensors:
+    build:
+      context: ./monitor-sensors
+      dockerfile: Dockerfile
+    container_name: monitor_sensors
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://sensors-db:5432/sensors
+      SPRING_DATASOURCE_USERNAME: YOUR_USERNAME
+      SPRING_DATASOURCE_PASSWORD: YOUR_PASSWORD
+    ports:
+      - "8080:8080"
+    depends_on:
+      - sensors-db
+    networks:
+      - backend
+
+  statistics-db:
+    image: postgres:17.4-alpine3.21
+    container_name: statistics-db
+    environment:
+      POSTGRES_DB: monitoring_statistics
+      POSTGRES_USER: YOUR_USERNAME
+      POSTGRES_PASSWORD: YOUR_PASSWORD
+    ports:
+      - "5440:5432" # Changed port to avoid conflict
+    volumes:
+      - statistics_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  statistics-service:
+    build:
+      context: ./statistics-service
+      dockerfile: Dockerfile
+    container_name: statistics-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://statistics-db:5432/monitoring_statistics
+      SPRING_DATASOURCE_USERNAME: YOUR_USERNAME
+      SPRING_DATASOURCE_PASSWORD: YOUR_PASSWORD
+      SERVER_PORT: 8081
+    ports:
+      - "8081:8081"
+    depends_on:
+      - statistics-db
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+volumes:
+  monitor_sensors_data:
+  statistics_data:

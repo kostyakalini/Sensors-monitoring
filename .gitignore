@@ -3,6 +3,7 @@
 
 # Log file
 *.log
+*.out
 
 # BlueJ files
 *.ctxt
@@ -20,5 +21,31 @@
 *.rar
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+.mvn/wrapper/maven-wrapper.jar
 hs_err_pid*
 replay_pid*
+
+# Gradle #
+########
+.gradle
+/build/
+
+# Ignore all files in .idea, except the workspace.xml which is needed to properly share the project
+.idea/*
+!.idea/workspace.xml
+!.idea/modules.xml
+!.idea/compiler.xml
+!.idea/gradle.xml
+
+# Local configuration file #
+##############################
+/statistics-service/src/main/resources/application.properties
+/monitor-sensors/src/main/resources/application.properties
+/compose.yaml
+
+# OS generated files #
+######################
+.DS_Store
+Thumbs.db
+/.gradle/
+/.idea/
